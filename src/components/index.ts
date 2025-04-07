@@ -4,5 +4,8 @@ import View from './View';
 import Text from './Text';
 import Button from './Button';
 import Icon from './Icon';
+import GradientContainer from './GradientContainer';
+import RadialImage from './RadialImage';
+import SpeakButton from './SpeakButton';
 
-export {View, Text, Button, Icon};
+export {View, Text, Button, Icon, GradientContainer, RadialImage, SpeakButton};

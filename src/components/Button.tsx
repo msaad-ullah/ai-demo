@@ -5,15 +5,16 @@ import {
   type TouchableOpacityProps,
   ViewStyle,
 } from 'react-native';
-import Text from './Text';
-import useTheme from '../hooks/useTheme';
-import Apptheme, {FontFamily} from '../styles/theme/theme';
 import Animated, {
   useAnimatedStyle,
   withRepeat,
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
+
+import Text from './Text';
+import useTheme from '../hooks/useTheme';
+import Apptheme, {FontFamily} from '../styles/theme/theme';
 
 // defining the types for quick common stylings through props and suggestions
 interface IProps extends TouchableOpacityProps {

@@ -1,5 +1,11 @@
 // Custom view component
-import {View, type ViewProps, FlexAlignType, ViewStyle} from 'react-native';
+import {
+  View,
+  type ViewProps,
+  type FlexAlignType,
+  type ViewStyle,
+} from 'react-native';
+
 import theme from '../styles/theme/theme';
 
 // defining the types for quick common stylings through props and suggestions

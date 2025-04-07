@@ -1,5 +1,6 @@
 import React from 'react';
 import {Text as RNText, TextProps} from 'react-native';
+
 import theme, {FontFamily} from '../styles/theme/theme';
 
 // defining the types for quick common stylings through props and suggestions
