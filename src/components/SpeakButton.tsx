@@ -1,14 +1,22 @@
-import {StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  StyleSheet,
+  TouchableOpacity,
+  type TouchableOpacityProps,
+} from 'react-native';
 
 import Icon from './Icon';
 import View from './View';
 import {useTheme} from '../hooks';
 import {horizontalScale, moderateScale} from '../helpers/metrics';
 
-export default function SpeakButton() {
+interface Props extends TouchableOpacityProps {
+  isListening: boolean;
+}
+
+export default function SpeakButton(props: Props) {
   const theme = useTheme();
   return (
-    <TouchableOpacity>
+    <TouchableOpacity {...props}>
       <View
         p="md"
         justifyContent="center"
@@ -20,7 +28,7 @@ export default function SpeakButton() {
           },
         ]}>
         <Icon
-          name={'microphone-alt'}
+          name={props.isListening ? 'microphone-alt-slash' : 'microphone-alt'}
           color={theme.colors.primary20}
           size={moderateScale(40)}
           vector="FontAwesome5"
