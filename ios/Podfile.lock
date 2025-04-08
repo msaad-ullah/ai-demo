@@ -1310,6 +1310,9 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-track-player (4.1.1):
+    - React-Core
+    - SwiftAudioEx (= 1.1.0)
   - react-native-voice (3.2.4):
     - React-Core
   - React-NativeModulesApple (0.78.2):
@@ -1835,6 +1838,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - Yoga
   - SocketRocket (0.7.1)
+  - SwiftAudioEx (1.1.0)
   - Yoga (0.0.0)
 
 DEPENDENCIES:
@@ -1880,6 +1884,7 @@ DEPENDENCIES:
   - React-microtasksnativemodule (from `../node_modules/react-native/ReactCommon/react/nativemodule/microtasks`)
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - react-native-track-player (from `../node_modules/react-native-track-player`)
   - "react-native-voice (from `../node_modules/@react-native-voice/voice`)"
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1920,6 +1925,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - SocketRocket
+    - SwiftAudioEx
 
 EXTERNAL SOURCES:
   boost:
@@ -2003,6 +2009,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-config"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-track-player:
+    :path: "../node_modules/react-native-track-player"
   react-native-voice:
     :path: "../node_modules/@react-native-voice/voice"
   React-NativeModulesApple:
@@ -2117,6 +2125,7 @@ SPEC CHECKSUMS:
   React-microtasksnativemodule: 6a39463c32ce831c4c2aa8469273114d894b6be9
   react-native-config: 644074ab88db883fcfaa584f03520ec29589d7df
   react-native-safe-area-context: 0f14bce545abcdfbff79ce2e3c78c109f0be283e
+  react-native-track-player: 6dc2e2633265704b8ab6d8124b80239d4ed1f911
   react-native-voice: 908a0eba96c8c3d643e4f98b7232c6557d0a6f9c
   React-NativeModulesApple: fd0545efbb7f936f78edd15a6564a72d2c34bb32
   React-perflogger: 5f8fa36a8e168fb355efe72099efe77213bc2ac6
@@ -2153,6 +2162,7 @@ SPEC CHECKSUMS:
   RNSound: 314cc5226453ef4a3314a196c65e8a65e5106a7b
   RNSVG: 8126581b369adf6a0004b6a6cab1a55e3002d5b0
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
+  SwiftAudioEx: f6aa653770f3a0d3851edaf8d834a30aee4a7646
   Yoga: e14bad835e12b6c7e2260fc320bd00e0f4b45add
 
 PODFILE CHECKSUM: 2ca122d68dd4a5386f40b87ee18c2b4ecc845b1f

@@ -3,6 +3,8 @@ import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import Voice from '@react-native-voice/voice';
 import RNFS from 'react-native-fs';
 import Sound from 'react-native-sound';
+import TrackPlayer from 'react-native-track-player';
+import {encode} from 'base64-arraybuffer';
 
 import {RadialImage, Text, View, SpeakButton} from '../components';
 import {useTheme} from '../hooks';
@@ -43,37 +45,34 @@ export default function Home() {
     try {
       await Voice.stop();
       setIsListening(false);
-      setMessages(prev => [...prev, {role: 'user', content: results[0]}]);
-      await onSpeechEndRequest([
-        ...messages,
-        {role: 'user', content: results[0]},
-      ]);
     } catch (e) {
       console.error(e);
     }
   };
 
-  const playAudioFromBase64 = async (base64Audio: string) => {
-    try {
-      const filePath = `${RNFS.DocumentDirectoryPath}/audio.wav`;
-      await RNFS.writeFile(filePath, base64Audio, 'base64');
+  const playAudioFromBase64 = async (base64Audio: string): Promise<void> => {
+    const path = `${RNFS.DocumentDirectoryPath}/${Date.now()}-audio.mp3`;
 
-      const sound = new Sound(filePath, '', error => {
-        if (error) {
-          console.log('Failed to load the sound', error);
-          return;
-        }
-        sound.play(success => {
-          if (success) {
-            console.log('Successfully played');
-          } else {
-            console.log('Playback failed');
-          }
-          sound.release();
-        });
+    try {
+      console.log('path', path);
+      console.log('base64', base64Audio?.slice(0, 100));
+      // Write base64 to a file
+      await RNFS.writeFile(path, base64Audio, 'base64');
+
+      // Reset TrackPlayer before playing
+      await TrackPlayer.reset();
+
+      // Add and play the track
+      await TrackPlayer.add({
+        id: 'chat-audio',
+        url: `file://${path}`,
+        title: 'Chat Response',
+        artist: 'OpenAI',
       });
-    } catch (e) {
-      console.error('Error playing audio:', e);
+
+      await TrackPlayer.play();
+    } catch (error) {
+      console.error('Error playing audio from base64:', error);
     }
   };
 
@@ -95,28 +94,48 @@ export default function Home() {
   };
 
   const onSpeechEndRequest = async (messagesList: Message[]) => {
+    console.log('messages list', messagesList);
     try {
       setLoading(true);
       const response = await apiClient.post('/chat/completions', {
-        model: 'gpt-4o-audio-preview',
-        modalities: ['text', 'audio'],
-        audio: {voice: 'alloy', format: 'wav'},
+        model: 'gpt-4o',
         messages: messagesList,
-        store: true,
       });
 
-      if (response) {
-        console.log(response.data);
-        await playAudioFromBase64(
-          response.data.choices[0]?.message?.audio?.data,
+      if (response.data) {
+        console.log(
+          'response.data',
+          response.data.choices[0]?.message?.content,
         );
-        setMessages(prev => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: response.data.choices[0]?.message?.audio?.transcript,
-          },
-        ]);
+        // await playAudioFromBase64(
+        //   response.data.choices[0]?.message?.audio?.data,
+        // );
+        if (response.data.choices[0]?.message?.content) {
+          const audioResponse = await apiClient.post(
+            '/audio/speech',
+            {
+              input: response.data.choices[0]?.message?.content,
+              model: 'tts-1-hd',
+              voice: 'alloy',
+              response_format: 'mp3',
+            },
+            {
+              responseType: 'arraybuffer',
+            },
+          );
+          console.log('audires', audioResponse);
+          const base64Audio = encode(audioResponse.data);
+
+          console.log('base64audio', base64Audio);
+          await playAudioFromBase64(base64Audio);
+          setMessages(prev => [
+            ...prev,
+            {
+              role: 'assistant',
+              content: response.data.choices[0]?.message?.content,
+            },
+          ]);
+        }
       }
       setLoading(false);
     } catch (err) {
@@ -139,36 +158,44 @@ export default function Home() {
 
   useEffect(() => {
     Voice.onSpeechStart = e => {
-      console.log('onSpeechStart: ', e);
+      // console.log('onSpeechStart: ', e);
     };
 
     Voice.onSpeechRecognized = e => {
-      console.log('onSpeechRecognized: ', e);
+      // console.log('onSpeechRecognized: ', e);
     };
 
     Voice.onSpeechEnd = e => {
-      console.log('onSpeechEnd: ', e);
+      // console.log('onSpeechEnd: ', e);
     };
 
     Voice.onSpeechError = e => {
       console.log('onSpeechError: ', e);
       setError(JSON.stringify(e.error));
+      stopRecognizing();
+      setIsListening(false);
+      destroyRecognizer();
     };
 
     Voice.onSpeechResults = e => {
-      console.log('onSpeechResults: ', e);
-      if (e.value) {
+      if (e.value && e.value.length > 0) {
         setResults(e.value);
+        setMessages(prev => {
+          const newMessages = [...prev, {role: 'user', content: e.value[0]}];
+          // Pass updated newMessages to the onSpeechEndRequest function
+          onSpeechEndRequest(newMessages);
+          return newMessages;
+        });
       }
     };
 
     Voice.onSpeechPartialResults = e => {
-      console.log('onSpeechPartialResults: ', e);
+      // console.log('onSpeechPartialResults: ', e);
       if (e.value) setPartialResults(e.value);
     };
 
     Voice.onSpeechVolumeChanged = e => {
-      console.log('onSpeechVolumeChanged: ', e);
+      // console.log('onSpeechVolumeChanged: ', e);
     };
 
     return () => {
