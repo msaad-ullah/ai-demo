@@ -1,11 +1,11 @@
 import axios from 'axios';
 import Config from 'react-native-config';
 
-const baseURL = Config.API_URL;
+const baseURL = Config.OPENAI_URL;
 
 const apiClient = axios.create({
   baseURL,
-  timeout: 10000,
+  timeout: 50000,
   headers: {
     'Content-Type': 'application/json',
   },

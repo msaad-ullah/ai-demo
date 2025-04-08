@@ -167,6 +167,8 @@ export default function Home() {
 
     Voice.onSpeechEnd = e => {
       // console.log('onSpeechEnd: ', e);
+      stopRecognizing();
+      setIsListening(false);
     };
 
     Voice.onSpeechError = e => {
@@ -182,7 +184,6 @@ export default function Home() {
         setResults(e.value);
         setMessages(prev => {
           const newMessages = [...prev, {role: 'user', content: e.value[0]}];
-          // Pass updated newMessages to the onSpeechEndRequest function
           onSpeechEndRequest(newMessages);
           return newMessages;
         });
