@@ -11,9 +11,10 @@ import Loader from './Loader';
 import RoundIconButton from './RoundIconButton';
 import TypingDotsAnimation from './TypingDotsAnimation';
 import ChatScreenHeader from './ChatScreenHeader';
-
+import AudioLoader from './AudioLoader';
 export {
   View,
+  AudioLoader,
   ChatScreenHeader,
   RoundIconButton,
   Text,

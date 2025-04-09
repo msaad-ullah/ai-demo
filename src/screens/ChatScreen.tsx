@@ -1,7 +1,15 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {FlatList, TextInput, TouchableOpacity} from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  FlatList,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
+import {encode} from 'base64-arraybuffer';
 import Voice from '@react-native-voice/voice';
+import RNFS from 'react-native-fs';
 
 import {
   GradientContainer,
@@ -15,6 +23,7 @@ import {useTheme} from '../hooks';
 import {FontFamily} from '../styles/theme/theme';
 import {moderateScale} from '../helpers/metrics';
 import apiClient from '../services/axios';
+import TrackPlayer from 'react-native-track-player';
 
 type Message = {
   role: 'user' | 'assistant';
@@ -32,6 +41,7 @@ export default function ChatScreen() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
   const [partialResults, setPartialResults] = useState<string[]>([]);
+  const [audioLoading, setAudioLoading] = useState(false);
 
   const startRecognizing = async () => {
     try {
@@ -109,6 +119,53 @@ export default function ChatScreen() {
     }
   };
 
+  const onAudioPlay = async (text: string) => {
+    try {
+      setAudioLoading(true);
+      const response = await apiClient.post(
+        '/audio/speech',
+        {
+          input: text,
+          model: 'tts-1-hd',
+          voice: 'alloy',
+        },
+        {
+          responseType: 'arraybuffer',
+        },
+      );
+      if (response && response.data) {
+        console.log('response', response.data);
+        const base64Audio = encode(response.data);
+        await playAudioFromBase64(base64Audio);
+      }
+      setAudioLoading(false);
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      setAudioLoading(false);
+      Alert.alert('Error', 'Could not play audio at this time.');
+    }
+  };
+
+  const playAudioFromBase64 = async (base64Audio: string): Promise<void> => {
+    const path = `${RNFS.DocumentDirectoryPath}/aidemoaudio.mp3`;
+
+    try {
+      await RNFS.writeFile(path, base64Audio, 'base64');
+      await TrackPlayer.reset();
+      await TrackPlayer.add({
+        id: 'chat-audio',
+        url: `file://${path}`,
+        title: 'Chat Response',
+        artist: 'OpenAI',
+      });
+
+      await TrackPlayer.play();
+    } catch (error) {
+      setAudioLoading(false);
+      console.error('Error playing audio from base64:', error);
+    }
+  };
+
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd();
@@ -162,7 +219,7 @@ export default function ChatScreen() {
           paddingTop: insets.top + theme.spacing.md,
         }}
         ph="md">
-        <ChatScreenHeader />
+        <ChatScreenHeader audioLoading={audioLoading} />
         <FlatList
           ref={flatListRef}
           data={messages}
@@ -178,7 +235,7 @@ export default function ChatScreen() {
               <Text size="sm">{item.content}</Text>
               {item.role === 'assistant' && (
                 <View p="xxs" alignItems="flex-end">
-                  <TouchableOpacity>
+                  <TouchableOpacity onPress={() => onAudioPlay(item.content)}>
                     <Icon
                       name="volume-up"
                       vector="FontAwesome5"
