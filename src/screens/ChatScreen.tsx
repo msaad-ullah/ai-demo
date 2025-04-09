@@ -121,6 +121,7 @@ export default function ChatScreen() {
 
   const onAudioPlay = async (text: string) => {
     try {
+      if (audioLoading) return;
       setAudioLoading(true);
       const response = await apiClient.post(
         '/audio/speech',
@@ -134,7 +135,6 @@ export default function ChatScreen() {
         },
       );
       if (response && response.data) {
-        console.log('response', response.data);
         const base64Audio = encode(response.data);
         await playAudioFromBase64(base64Audio);
       }
