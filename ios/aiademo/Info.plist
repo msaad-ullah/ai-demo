@@ -90,8 +90,10 @@
 
 
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Description of why you require the use of the microphone</string>
+	<string>App needs to access your Microphone</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Description of why you require the use of the speech recognition</string>
+	<string>App needs permission for speech recognition</string>
+	<key>NSCameraUsageDescription</key>
+	<string>App needs camera permission</string>
 </dict>
 </plist>

@@ -7,5 +7,21 @@ import Icon from './Icon';
 import GradientContainer from './GradientContainer';
 import RadialImage from './RadialImage';
 import SpeakButton from './SpeakButton';
+import Loader from './Loader';
+import RoundIconButton from './RoundIconButton';
+import TypingDotsAnimation from './TypingDotsAnimation';
+import ChatScreenHeader from './ChatScreenHeader';
 
-export {View, Text, Button, Icon, GradientContainer, RadialImage, SpeakButton};
+export {
+  View,
+  ChatScreenHeader,
+  RoundIconButton,
+  Text,
+  TypingDotsAnimation,
+  Button,
+  Icon,
+  GradientContainer,
+  RadialImage,
+  SpeakButton,
+  Loader,
+};

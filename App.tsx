@@ -1,13 +1,12 @@
+import {useEffect} from 'react';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {GradientContainer} from './src/components';
-import Home from './src/screens/Home';
 import {Provider} from 'react-redux';
+
+import {GradientContainer} from './src/components';
 import {store} from './src/redux/store';
 import trackPlayerSetup from './trackPlayer';
-import {useEffect} from 'react';
-import Config from 'react-native-config';
-
-console.log(Config.API_URL, Config.API_TOKEN);
+import MainNavigation from './src/navigation';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
 
 export default function App() {
   useEffect(() => {
@@ -15,11 +14,11 @@ export default function App() {
   }, []);
   return (
     <Provider store={store}>
-      <SafeAreaProvider>
-        <GradientContainer>
-          <Home />
-        </GradientContainer>
-      </SafeAreaProvider>
+      <GestureHandlerRootView style={{flex: 1}}>
+        <SafeAreaProvider>
+          <MainNavigation />
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </Provider>
   );
 }
