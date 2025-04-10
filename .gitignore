@@ -3,7 +3,7 @@
 .DS_Store
 
 .env
-
+network_security_config.xml
 # Xcode
 #
 build/

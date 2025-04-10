@@ -83,6 +83,7 @@ export default function ChatScreen() {
   };
 
   const onSend = async () => {
+    if (loading) return;
     if (input.length < 1) return;
 
     setInput('');

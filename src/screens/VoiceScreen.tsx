@@ -7,8 +7,8 @@ import {
   RTCSessionDescription,
   type MediaStreamTrack,
 } from 'react-native-webrtc';
-import {Platform, TouchableOpacity} from 'react-native';
-import {useCallback, useRef, useState} from 'react';
+import {Alert, Platform, TouchableOpacity} from 'react-native';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
@@ -60,7 +60,7 @@ export default function VoiceScreen() {
       pc.ontrack = (event: any) =>
         remoteMediaStream.current.addTrack(event.streams[0]);
 
-      const ms = await mediaDevices.getUserMedia({audio: true});
+      const ms = await mediaDevices.getUserMedia({audio: true, video: false});
       const track = ms.getTracks()[0];
       localTrackRef.current = track;
       pc.addTrack(track);
@@ -72,6 +72,18 @@ export default function VoiceScreen() {
         const data = JSON.parse(e.data);
         console.log('dataChannel message', JSON.stringify(data));
         setEvents(prev => [data, ...prev]);
+
+        if (data.type === 'output_audio_buffer.stopped') {
+          if (localTrackRef.current) {
+            localTrackRef.current.enabled = true;
+          }
+        }
+
+        if (data.type === 'input_audio_buffer.speech_stopped') {
+          if (localTrackRef.current) {
+            localTrackRef.current.enabled = false;
+          }
+        }
 
         if (data.type === 'response.audio_transcript.done') {
           setTranscript(data.transcript);
@@ -139,7 +151,11 @@ export default function VoiceScreen() {
     }, []),
   );
 
-  return loading || !localTrackRef.current ? (
+  useEffect(() => {
+    getMicrophonePermission();
+  }, []);
+
+  return loading ? (
     <Loader />
   ) : (
     <GradientContainer>
@@ -161,7 +177,7 @@ export default function VoiceScreen() {
           <RadialImage />
           {remoteMediaStream && remoteMediaStream.current && (
             // @ts-ignore
-            <RTCView stream={remoteMediaStream.current} />
+            <RTCView stream={remoteMediaStream.current} audioOnly={false} />
           )}
           <TouchableOpacity
             onPress={() => navigation.navigate(Screens.ChatScreen)}>
