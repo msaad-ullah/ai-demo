@@ -54,5 +54,20 @@ export async function getMicrophonePermission() {
     return result;
   } catch (err) {
     console.log('getMicrophonePermission error', err);
+    return null;
   }
 }
+
+export const getMicrophonePermissionStatus = async () => {
+  try {
+    const result = await check(
+      Platform.OS === 'ios'
+        ? PERMISSIONS.IOS.MICROPHONE
+        : PERMISSIONS.ANDROID.RECORD_AUDIO,
+    );
+    return result;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};

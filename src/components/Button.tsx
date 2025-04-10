@@ -55,13 +55,13 @@ export default function Button({
         {
           backgroundColor: theme.colors[backgroundColor],
           padding: theme.spacing.lg,
-          borderRadius: 40,
+          borderRadius: 10,
           width: '100%',
         },
         style as ViewStyle,
       ]}>
       {!loading ? (
-        <Text color={textColor} textAlign="center" variant="semibold">
+        <Text color={textColor} textAlign="center" variant="semibold" size="sm">
           {label}
         </Text>
       ) : (
@@ -71,7 +71,7 @@ export default function Button({
               color: theme.colors[textColor],
               textAlign: 'center',
               fontFamily: FontFamily.semibold,
-              fontSize: theme.fontSizes.body,
+              fontSize: theme.fontSizes.sm,
             },
             animatedStyles,
           ]}>

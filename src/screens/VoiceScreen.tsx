@@ -7,7 +7,7 @@ import {
   RTCSessionDescription,
   type MediaStreamTrack,
 } from 'react-native-webrtc';
-import {TouchableOpacity} from 'react-native';
+import {Platform, TouchableOpacity} from 'react-native';
 import {useCallback, useRef, useState} from 'react';
 import axios from 'axios';
 import Config from 'react-native-config';
@@ -24,6 +24,10 @@ import {
 import {useTheme} from '../hooks';
 import {moderateScale} from '../helpers/metrics';
 import Screens from '../navigation/Screens';
+import {
+  getMicrophonePermission,
+  getSpeechRecognitionPermission,
+} from '../services/permissions';
 
 export default function VoiceScreen() {
   const insets = useSafeAreaInsets();
@@ -40,6 +44,7 @@ export default function VoiceScreen() {
   async function init() {
     try {
       setLoading(true);
+
       const tokenResponse = await axios.get(Config.DEV_SERVER_URL + '/session');
       const ephimerialKey = tokenResponse.data.client_secret.value;
 
@@ -151,9 +156,7 @@ export default function VoiceScreen() {
           flex={1}
           justifyContent="space-evenly">
           <Text variant="bold" size="xxl" textAlign="center">
-            {transcript && transcript.length > 0
-              ? transcript
-              : 'Go ahead, Im listening...'}
+            Go ahead, Im listening...
           </Text>
           <RadialImage />
           {remoteMediaStream && remoteMediaStream.current && (

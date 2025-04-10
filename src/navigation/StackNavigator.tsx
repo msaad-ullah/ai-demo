@@ -3,7 +3,6 @@ import {
   StackNavigationOptions,
 } from '@react-navigation/stack';
 
-import BottomTabs from './BottomTabs';
 import {StackParamsList} from './types';
 import Screens from './Screens';
 import {ChatScreen, VoiceScreen} from '../screens';
